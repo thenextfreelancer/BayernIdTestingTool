@@ -1,0 +1,14 @@
+target/*
+.project
+.settings/
+Screen_Shot_20180305_at_135717.png
+SimpleProject.rtf
+authega_201802061157_2048.p12
+authega_201802061157_2048_1.pfx
+certi.cer
+contact.png
+error/
+test-output/
+users_180305200941.jpeg
+.classpath
+/target/
