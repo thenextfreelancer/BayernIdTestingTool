@@ -6,10 +6,8 @@ package de.hd.gmbh;
 import java.util.List;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 
 /**
  * @author Moksh
@@ -104,16 +102,6 @@ public class RegistrationSuite implements Module
          
          Util.scrollWindow(driver);
          footer.findElements(By.tagName("input")).get(0).click();
-         
-         try {
-            WebElement registerFormTmp = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-            registerFormTmp.findElement(By.xpath("form/dl/dt/span"));
-            Assert.assertTrue(true);
-         } catch(NoSuchElementException e) {
-            throw e;
-         } catch(Exception e) {
-            throw e;
-         }
       }
       catch (Exception e)
       {
