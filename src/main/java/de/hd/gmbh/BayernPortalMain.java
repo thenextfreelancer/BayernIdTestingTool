@@ -88,8 +88,9 @@ public class BayernPortalMain
       registrationSuite.fillRegisterInfoAndSubmit(registrationDataList.get(0));
       
       //verify submitted page
-      registrationSuite.verifySubmittedPage();
+//      registrationSuite.verifySubmittedPage();
       
+      Thread.sleep(20000);
       //Open Gmail for email verification
       registrationSuite.open_gmail();
       
