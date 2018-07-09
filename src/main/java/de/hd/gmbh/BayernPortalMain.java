@@ -1,29 +1,30 @@
 package de.hd.gmbh;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import de.hd.gmbh.gmail.GmailLogin;
 
 public class BayernPortalMain
 {
    public static WebDriver driver;
    
+   public final String baseUrl = "https://infra-pre.buergerserviceportal.de/bayern/freistaat";
+   
    public static String chromeIdentifier = "--chrome=";
    
    public static String mozIdentifier = "--firefox=";
    
-   public static RegistrationSuite suite;
+   public static RegistrationSuite registrationSuite;
+   
+   public static LoginSuite loginSuite;
    
    public By errorMsgBlock = By.className("ErrorMessageBlock");
    
@@ -58,136 +59,59 @@ public class BayernPortalMain
       
       driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
       driver.manage().window().maximize();
-      suite = new RegistrationSuite();
-      suite.init();
    }
    
-//   public static void main(String args[]) {
-//      System.setProperty("webdriver.chrome.driver", args[0]);
-//      driver = new ChromeDriver();
-//      driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-//      driver.manage().window().maximize();
-//      register();
-//   }
-
-   @Test(priority=1)
-   public void test_familien_name()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data1"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[2]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
+   @Test
+   public void initSuite() throws Exception {
+      
+      /**
+       * Registration Process
+       */
+      
+      //init
+      registrationSuite = new RegistrationSuite(driver);
+      
+      //Open base url
+      driver.get(baseUrl);
+      
+      //Open registration module
+      Util.scrollWindow(driver);
+      driver.findElement(By.xpath("//*[@id=\"UIPage\"]/div/div/div[1]/div/div/div[2]/span/div[2]/a")).click();
+      
+      //Open registration page
+      registrationSuite.openRegisterPage();
+      
+      //Fill registration and submit
+      String excelFileLocation = "input/input.xlsx";
+      List<RegistrationEntity> registrationDataList = new ExcelReader(excelFileLocation).getRegistrationDataList();
+      
+      registrationSuite.fillRegisterInfoAndSubmit(registrationDataList.get(0));
+      
+      //verify submitted page
+      registrationSuite.verifySubmittedPage();
+      
+      //Open Gmail for email verification
+      registrationSuite.open_gmail();
+      
+      System.out.println("Press any key to start login automation:");
+      @SuppressWarnings("resource")
+      Scanner option = new Scanner(System.in);
+      option.nextLine();
+      
+      /**
+       * Login Process
+       */
+      // Open landing page
+      loginSuite = new LoginSuite(driver);
+      driver.get(baseUrl);
+      
+      //Login process
+      Util.scrollWindow(driver);
+      loginSuite.processLogin(registrationDataList.get(0).getBenutzername(), registrationDataList.get(0).getPasswort());
+      
+      Thread.sleep(20000);
    }
    
-   @Test(priority=2)
-   public void test_Vorname()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data2"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[3]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   @Test(priority=3)
-   public void test_Geburtsname()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data3"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[4]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   @Test(priority=4)
-   public void test_Geburtsdatum()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data4"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[7]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   @Test(priority=5)
-   public void test_Geburtsort()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data5"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[8]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   @Test(priority=5)
-   public void test_E_Mail_Adresse()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data6"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[9]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   @Test(priority=7)
-   public void test_E_Mail_Adresse_wiederholen()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data7"));
-      try
-      {
-         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-         Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[10]")).getText(), "");
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   @Test(priority=8)
-   public void test_all_data()
-   {
-      suite.fillRegisterInfoAndSubmit(AppData.get("data8")); // real data
-   }
-   
-   @Test(priority=9)
-   public void open_gmail()
-   {
-      GmailLogin gmail = new GmailLogin();
-      gmail.setUp();
-      gmail.login();
-   }
    
    @AfterClass(alwaysRun = true)
    public void tearDown()

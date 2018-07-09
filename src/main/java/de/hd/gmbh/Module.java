@@ -9,5 +9,5 @@ package de.hd.gmbh;
  */
 public interface Module
 {
-   public void init();
+   
 }
