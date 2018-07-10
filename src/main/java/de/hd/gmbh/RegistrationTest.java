@@ -14,14 +14,14 @@ public class RegistrationTest
    
    WebDriver driver = null;
    
-   @BeforeClass(alwaysRun = true)
+//   @BeforeClass(alwaysRun = true)
    public void setUp() throws Exception
    {
       driver = new ChromeDriver();
       suite = new RegistrationSuite(driver);
    }
 
-   @Test(priority=1)
+//   @Test(priority=1)
    public void test_familien_name()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data1"));
@@ -36,7 +36,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=2)
+//   @Test(priority=2)
    public void test_Vorname()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data2"));
@@ -51,7 +51,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=3)
+//   @Test(priority=3)
    public void test_Geburtsname()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data3"));
@@ -66,7 +66,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=4)
+//   @Test(priority=4)
    public void test_Geburtsdatum()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data4"));
@@ -81,7 +81,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=5)
+//   @Test(priority=5)
    public void test_Geburtsort()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data5"));
@@ -96,7 +96,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=5)
+//   @Test(priority=5)
    public void test_E_Mail_Adresse()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data6"));
@@ -111,7 +111,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=7)
+//   @Test(priority=7)
    public void test_E_Mail_Adresse_wiederholen()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data7"));
@@ -126,7 +126,7 @@ public class RegistrationTest
       }
    }
    
-   @Test(priority=8)
+//   @Test(priority=8)
    public void test_all_data()
    {
       suite.fillRegisterInfoAndSubmit(AppData.get("data8")); // real data

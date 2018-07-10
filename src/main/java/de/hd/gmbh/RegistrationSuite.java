@@ -7,7 +7,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-import org.testng.Assert;
 
 import de.hd.gmbh.gmail.GmailLogin;
 
@@ -119,15 +118,19 @@ public class RegistrationSuite implements Module
       }
    }
    
-   public void verifySubmittedPage() throws InterruptedException {
-      WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
-      Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[2]")).getText(), "");
-      Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[3]")).getText(), "");
-      Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[4]")).getText(), "");
-      Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[7]")).getText(), "");
-      Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[8]")).getText(), "");
-      Assert.assertNotEquals(registerForm.findElement(By.xpath("form/span[10]")).getText(), "");
-      
+   public boolean isRegisterPageHasErrors() {
+      try {
+         WebElement registerForm = Util.fluentWait(By.className("RegisterPage"), driver, 30, 5);
+         try {
+            WebElement errorEl = registerForm.findElement(By.xpath("form/span[2]"));
+            if(!"".equals(errorEl.getText()) ) {
+               return true;
+            }
+         } catch(Exception e) {
+         }
+      } catch(Exception e) {
+      }
+      return false;
    }
    
    public void fillElement(By by, String value) {
@@ -211,9 +214,10 @@ public class RegistrationSuite implements Module
       }
    }
 
-   public void open_gmail()
+   public void open_gmail(String userName)
    {
       GmailLogin gmail = new GmailLogin();
+      gmail.setUserName(userName);
       gmail.setUp();
       gmail.login();
    }

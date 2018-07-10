@@ -88,35 +88,38 @@ public class BayernPortalMain
       registrationSuite.fillRegisterInfoAndSubmit(registrationDataList.get(0));
       
       //verify submitted page
-//      registrationSuite.verifySubmittedPage();
-      
-      Thread.sleep(20000);
-      //Open Gmail for email verification
-      registrationSuite.open_gmail();
-      
-      System.out.println("Press any key to start login automation:");
-      @SuppressWarnings("resource")
-      Scanner option = new Scanner(System.in);
-      option.nextLine();
-      
-      /**
-       * Login Process
-       */
-      // Open landing page
-      loginSuite = new LoginSuite(driver);
-      driver.get(baseUrl);
-      
-      //Login process
-      Util.scrollWindow(driver);
-      loginSuite.processLogin(registrationDataList.get(0).getBenutzername(), registrationDataList.get(0).getPasswort());
-      
-      Thread.sleep(20000);
+      boolean status = registrationSuite.isRegisterPageHasErrors();
+      if(status) {
+         System.out.println("**********************");
+         System.out.println("ERROR: Register page has some errors. Please correct and run the app again.");
+         System.out.println("**********************");
+      } else {
+         Thread.sleep(5000);
+         //Open Gmail for email verification
+         registrationSuite.open_gmail(registrationDataList.get(0).getEmail());
+         
+         System.out.println("Press any key to start login automation:");
+         @SuppressWarnings("resource")
+         Scanner option = new Scanner(System.in);
+         option.nextLine();
+         
+         /**
+          * Login Process
+          */
+         // Open landing page
+         loginSuite = new LoginSuite(driver);
+         driver.get(baseUrl);
+         
+         //Login process
+         Util.scrollWindow(driver);
+         loginSuite.processLogin(registrationDataList.get(0).getBenutzername(), registrationDataList.get(0).getPasswort());
+      }
    }
    
-   
    @AfterClass(alwaysRun = true)
-   public void tearDown()
+   public void tearDown() throws InterruptedException
    {
+      Thread.sleep(20000);
       driver.quit();
    }
 
