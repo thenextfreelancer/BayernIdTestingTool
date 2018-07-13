@@ -97,7 +97,7 @@ public class BayernPortalMain
          Thread.sleep(5000);
          //Open Gmail for email verification
          registrationSuite.open_gmail(registrationDataList.get(0).getEmail());
-         
+      
          System.out.println("Press any key to start login automation:");
          @SuppressWarnings("resource")
          Scanner option = new Scanner(System.in);
@@ -105,14 +105,52 @@ public class BayernPortalMain
          
          /**
           * Login Process
+          * 
+          * Two processes:
+          * 1. Login by username/password
+          * 2. Login by authentication certification
           */
+         
+         //Let's ask user to choose between processes
+         System.out.println("Choose your login method:");
+         System.out.println("1 for login with user name/ password.");
+         System.out.println("2 for login with certificate.");
+         int loginChoice = 0;
+         boolean loop = true;
+         while(loop) {
+            System.out.println("Choose option and press <Enter>:");
+            @SuppressWarnings("resource")
+            Scanner loginChoiceS = new Scanner(System.in);
+            try {
+               loginChoice = loginChoiceS.nextInt();
+               loop = false;
+            } catch(Exception e){
+               System.out.println("Wrong input!!");
+            }
+         }
+         
          // Open landing page
          loginSuite = new LoginSuite(driver);
          driver.get(baseUrl);
          
          //Login process
          Util.scrollWindow(driver);
-         loginSuite.processLogin(registrationDataList.get(0).getBenutzername(), registrationDataList.get(0).getPasswort());
+         
+         if(loginChoice == 1) {
+            loginSuite.processLoginWithUserNamePassword(registrationDataList.get(0).getBenutzername(), registrationDataList.get(0).getPasswort());
+         } else {
+            System.out.println("For login with certificate, please enter certificate path on your system:");
+            @SuppressWarnings("resource")
+            Scanner certPathS = new Scanner(System.in);
+            String certPath = certPathS.nextLine();
+            
+            System.out.println("For login with certificate, please enter PIN for certificate:");
+            @SuppressWarnings("resource")
+            Scanner pinS = new Scanner(System.in);
+            String pin = pinS.nextLine();
+            
+            loginSuite.processLoginWithCertificate(certPath, pin);
+         }
       }
    }
    
@@ -122,5 +160,5 @@ public class BayernPortalMain
       Thread.sleep(20000);
       driver.quit();
    }
-
+   
 }
