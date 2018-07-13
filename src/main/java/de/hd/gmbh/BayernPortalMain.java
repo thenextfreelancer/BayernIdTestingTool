@@ -59,49 +59,73 @@ public class BayernPortalMain
       
       driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
       driver.manage().window().maximize();
+      
+      
    }
    
    @Test
    public void initSuite() throws Exception {
-      
-      /**
-       * Registration Process
-       */
-      
-      //init
-      registrationSuite = new RegistrationSuite(driver);
-      
-      //Open base url
-      driver.get(baseUrl);
-      
-      //Open registration module
-      Util.scrollWindow(driver);
-      driver.findElement(By.xpath("//*[@id=\"UIPage\"]/div/div/div[1]/div/div/div[2]/span/div[2]/a")).click();
-      
-      //Open registration page
-      registrationSuite.openRegisterPage();
-      
-      //Fill registration and submit
-      String excelFileLocation = "input/input.xlsx";
-      List<RegistrationEntity> registrationDataList = new ExcelReader(excelFileLocation).getRegistrationDataList();
-      
-      registrationSuite.fillRegisterInfoAndSubmit(registrationDataList.get(0));
-      
-      //verify submitted page
-      boolean status = registrationSuite.isRegisterPageHasErrors();
-      if(status) {
-         System.out.println("**********************");
-         System.out.println("ERROR: Register page has some errors. Please correct and run the app again.");
-         System.out.println("**********************");
-      } else {
-         Thread.sleep(5000);
-         //Open Gmail for email verification
-         registrationSuite.open_gmail(registrationDataList.get(0).getEmail());
-      
-         System.out.println("Press any key to start login automation:");
+      System.out.println("Please select in below options:");
+      System.out.println("Press 1 for Registration Module.");
+      System.out.println("Press 2 for Login Module.");
+      boolean loop1 = true;
+      int moduleSwitch = 1;
+      while(loop1) {
+         System.out.println("Choose option and press <Enter>:");
          @SuppressWarnings("resource")
-         Scanner option = new Scanner(System.in);
-         option.nextLine();
+         Scanner moduleSwitchS = new Scanner(System.in);
+         try {
+            moduleSwitch = moduleSwitchS.nextInt();
+            loop1 = false;
+         } catch(Exception e){
+            System.out.println("Wrong input!!");
+         }
+      }
+      
+      init(moduleSwitch);
+   }
+   
+   public void init(int moduleSwitch) throws Exception {
+      
+      if(moduleSwitch == 1) {
+         /**
+          * Registration Process
+          */
+         
+         //init
+         registrationSuite = new RegistrationSuite(driver);
+         
+         //Open base url
+         driver.get(baseUrl);
+         
+         //Open registration module
+         Util.scrollWindow(driver);
+         driver.findElement(By.xpath("//*[@id=\"UIPage\"]/div/div/div[1]/div/div/div[2]/span/div[2]/a")).click();
+         
+         //Open registration page
+         registrationSuite.openRegisterPage();
+         
+         //Fill registration and submit
+         String excelFileLocation = "input/input.xlsx";
+         List<RegistrationEntity> registrationDataList = new ExcelReader(excelFileLocation).getRegistrationDataList();
+         
+         registrationSuite.fillRegisterInfoAndSubmit(registrationDataList.get(0));
+         
+         //verify submitted page
+         boolean status = registrationSuite.isRegisterPageHasErrors();
+         if(status) {
+            System.out.println("**********************");
+            System.out.println("ERROR: Register page has some errors. Please correct and run the app again.");
+            System.out.println("**********************");
+         } else {
+            Thread.sleep(5000);
+            //Open Gmail for email verification
+            registrationSuite.open_gmail(registrationDataList.get(0).getEmail());
+         }
+         
+         
+         
+      } else if(moduleSwitch == 2){
          
          /**
           * Login Process
@@ -116,14 +140,14 @@ public class BayernPortalMain
          System.out.println("1 for login with user name/ password.");
          System.out.println("2 for login with certificate.");
          int loginChoice = 0;
-         boolean loop = true;
-         while(loop) {
+         boolean loop2 = true;
+         while(loop2) {
             System.out.println("Choose option and press <Enter>:");
             @SuppressWarnings("resource")
             Scanner loginChoiceS = new Scanner(System.in);
             try {
                loginChoice = loginChoiceS.nextInt();
-               loop = false;
+               loop2 = false;
             } catch(Exception e){
                System.out.println("Wrong input!!");
             }
@@ -137,7 +161,17 @@ public class BayernPortalMain
          Util.scrollWindow(driver);
          
          if(loginChoice == 1) {
-            loginSuite.processLoginWithUserNamePassword(registrationDataList.get(0).getBenutzername(), registrationDataList.get(0).getPasswort());
+            System.out.println("Enter user name:");
+            @SuppressWarnings("resource")
+            Scanner userNameS = new Scanner(System.in);
+            String userName = userNameS.nextLine();
+            
+            System.out.println("Enter password:");
+            @SuppressWarnings("resource")
+            Scanner passS = new Scanner(System.in);
+            String pass = passS.nextLine();
+            
+            loginSuite.processLoginWithUserNamePassword(userName, pass);
          } else {
             System.out.println("For login with certificate, please enter certificate path on your system:");
             @SuppressWarnings("resource")
